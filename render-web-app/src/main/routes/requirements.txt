@@ -7,3 +7,5 @@ scikit-learn
 tensorflow
 flask-cors
 pandas
+flask
+gunicorn
