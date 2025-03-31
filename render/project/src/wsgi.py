@@ -11,4 +11,8 @@ sys.path.insert(0, current_dir)
 from app import app as application
 
 # For compatibility with different WSGI servers
+<<<<<<< Updated upstream
 app = application
+=======
+app = application
+>>>>>>> Stashed changes
