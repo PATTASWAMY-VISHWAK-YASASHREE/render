@@ -7,3 +7,4 @@ scikit-learn
 Flask-SQLAlchemy
 Flask-Login
 Flask-Bcrypt
+
