@@ -1,0 +1,10 @@
+Flask-SQLAlchemy
+Flask-Login
+Flask-Bcrypt
+pandas
+numpy
+scikit-learn
+tensorflow
+flask-cors
+Flask-Mail
+Flask-WTF   
