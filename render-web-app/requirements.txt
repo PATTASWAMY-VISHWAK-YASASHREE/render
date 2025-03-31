@@ -8,3 +8,5 @@ tensorflow
 flask-cors
 Flask-Mail
 Flask-WTF   
+flask
+gunicorn
