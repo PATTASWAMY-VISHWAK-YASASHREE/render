@@ -12,7 +12,11 @@ from app import app as application
 
 # For compatibility with different WSGI servers
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 app = application
+=======
+app = application
+>>>>>>> Stashed changes
 =======
 app = application
 >>>>>>> Stashed changes
