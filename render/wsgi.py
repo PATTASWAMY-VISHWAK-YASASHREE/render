@@ -1,10 +1,11 @@
 import sys
 import os
 
-# Add the current directory to the Python path
-sys.path.insert(0, os.path.dirname(__file__))
+# Add the src directory to the Python path
+sys.path.append(os.path.join(os.path.dirname(__file__), "src"))
 
-from app import app
+# Import the Flask app
+from app import app as application
 
-if __name__ == "__main__":
-    app.run()
+# Make app available for gunicorn
+app = application
