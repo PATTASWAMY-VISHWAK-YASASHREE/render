@@ -1,8 +1,5 @@
+flask
+gunicorn
+tensorflow
 numpy
 pandas
-tensorflow
-scikit-learn
-flask
-flask-cors
-gunicorn
-wsgi
