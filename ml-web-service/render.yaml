@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: ml-web-service-api
+    env: python
+    plan: free
+    buildCommand: pip install -r api/requirements.txt
+    startCommand: python api/app.py
+    envVars:
+      - key: FLASK_ENV
+        value: production
+    autoDeploy: true
+
+  - type: web
+    name: ml-web-service-frontend
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    autoDeploy: true
+    publishDirectory: frontend/build

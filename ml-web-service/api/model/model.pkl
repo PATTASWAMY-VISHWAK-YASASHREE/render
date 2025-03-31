@@ -1,0 +1,12 @@
+import pickle
+from sklearn.ensemble import RandomForestClassifier
+
+# Example: Train a simple model
+X_train = [[0, 0], [1, 1]]
+y_train = [0, 1]
+model = RandomForestClassifier()
+model.fit(X_train, y_train)
+
+# Save the model to model.pkl
+with open('api/model/model.pkl', 'wb') as f:
+    pickle.dump(model, f)
