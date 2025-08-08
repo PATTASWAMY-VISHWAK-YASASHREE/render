@@ -1,7 +1,8 @@
+import os
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user, UserMixin
 from flask_bcrypt import Bcrypt
 import tensorflow as tf
 import numpy as np
@@ -9,15 +10,31 @@ import numpy as np
 app = Flask(__name__)
 CORS(app)
 
-app.config['SECRET_KEY'] = 'your_secret_key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+# Use environment variable for secret key or fallback to a default for development
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///site.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 bcrypt = Bcrypt(app)
 
+# User model definition
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(150), unique=True, nullable=False)
+    email = db.Column(db.String(150), unique=True, nullable=False)
+    password = db.Column(db.String(150), nullable=False)
+
+    def __repr__(self):
+        return f'<User {self.username}>'
+
 # Load model once on startup
-model = tf.keras.models.load_model("diabetes-prediction_model.keras")
+try:
+    model = tf.keras.models.load_model("diabetes-prediction_model.keras")
+except FileNotFoundError:
+    print("Warning: Model file not found. ML prediction will not work.")
+    model = None
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -30,6 +47,9 @@ def home():
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
+        if model is None:
+            return jsonify({"error": "ML model not available"}), 503
+            
         data = request.get_json()
         features = np.array(data['features']).reshape(1, -1)  # Adjust based on model input
         prediction = model.predict(features)
@@ -67,3 +87,8 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('home'))
+
+if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
+    app.run(debug=True)
