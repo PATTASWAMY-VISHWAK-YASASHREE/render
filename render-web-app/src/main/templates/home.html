@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Prediction App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .nav {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .nav a {
+            margin: 0 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .nav a:hover {
+            background-color: #0056b3;
+        }
+        .prediction-form {
+            margin: 30px 0;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 4px;
+            display: none;
+        }
+        .result.success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .result.error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Diabetes Prediction System</h1>
+        
+        <div class="nav">
+            <a href="/">Home</a>
+            <a href="/register">Register</a>
+            <a href="/login">Login</a>
+            <a href="/logout">Logout</a>
+        </div>
+
+        <div class="prediction-form">
+            <h2>Make a Prediction</h2>
+            <form id="predictionForm">
+                <div class="form-group">
+                    <label for="feature1">Glucose Level:</label>
+                    <input type="number" id="feature1" name="feature1" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="feature2">Blood Pressure:</label>
+                    <input type="number" id="feature2" name="feature2" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="feature3">BMI:</label>
+                    <input type="number" id="feature3" name="feature3" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="feature4">Age:</label>
+                    <input type="number" id="feature4" name="feature4" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="feature5">Insulin:</label>
+                    <input type="number" id="feature5" name="feature5" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="feature6">Pregnancies:</label>
+                    <input type="number" id="feature6" name="feature6" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="feature7">Skin Thickness:</label>
+                    <input type="number" id="feature7" name="feature7" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="feature8">Diabetes Pedigree Function:</label>
+                    <input type="number" id="feature8" name="feature8" step="0.01" required>
+                </div>
+                <button type="submit">Predict</button>
+            </form>
+        </div>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const features = [];
+            for (let i = 1; i <= 8; i++) {
+                features.push(parseFloat(formData.get(`feature${i}`)));
+            }
+            
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ features: features })
+                });
+                
+                const data = await response.json();
+                const resultDiv = document.getElementById('result');
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.style.display = 'block';
+                    resultDiv.innerHTML = `<strong>Prediction Result:</strong> ${JSON.stringify(data.prediction)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.style.display = 'block';
+                    resultDiv.innerHTML = `<strong>Error:</strong> ${data.error}`;
+                }
+            } catch (error) {
+                const resultDiv = document.getElementById('result');
+                resultDiv.className = 'result error';
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = `<strong>Error:</strong> ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
